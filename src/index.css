@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+/* @layer base: estilos padrão aplicados à página inteira */
+@layer base {
+  body {
+    /* Fundo cinza claro e cor de texto padrão em toda a tela */
+    @apply bg-slate-50 text-slate-800;
+  }
+}
