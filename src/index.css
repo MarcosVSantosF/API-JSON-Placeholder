@@ -1,9 +1,32 @@
 @import "tailwindcss";
 
-/* @layer base: estilos padrão aplicados à página inteira */
+/* @theme: registra animações personalizadas, que viram classes do Tailwind
+   (animate-fade-in e animate-scale-in) */
+@theme {
+  --animate-fade-in: fade-in 150ms ease-out;
+  --animate-scale-in: scale-in 150ms ease-out;
+
+  /* Fundo escuro: só aparece suavemente */
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  /* Caixa do modal: aparece crescendo de 95% até o tamanho normal */
+  @keyframes scale-in {
+    from { opacity: 0; transform: scale(0.95); }
+    to { opacity: 1; transform: scale(1); }
+  }
+}
+
 @layer base {
+  /* Reserva o espaço da barra de rolagem. Sem isso, travar a rolagem
+     faz a barra sumir e o conteúdo "pular" alguns pixels para o lado */
+  html {
+    scrollbar-gutter: stable;
+  }
+
   body {
-    /* Fundo cinza claro e cor de texto padrão em toda a tela */
     @apply bg-slate-50 text-slate-800;
   }
 }
