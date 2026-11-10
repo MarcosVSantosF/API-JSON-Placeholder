@@ -1,75 +1,134 @@
-# React + TypeScript + Vite
+# Lista de Usuários — JSONPlaceholder
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Aplicação front-end desenvolvida como desafio técnico para a vaga de **Desenvolvedor Front-End Júnior**.
 
-Currently, two official plugins are available:
+Consome a API pública [JSONPlaceholder](https://jsonplaceholder.typicode.com) e exibe uma lista de usuários com busca, detalhes em modal, tema claro/escuro e estados de carregamento e erro.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## ✨ Funcionalidades
 
-## React Compiler
+- Listagem de usuários (nome e e-mail)
+- Busca por nome com debounce e normalização (ignora acentos e maiúsculas)
+- Modal de detalhes ao clicar em um usuário (nome, e-mail, telefone, empresa e cidade)
+- Estados visuais de carregamento e erro (com botão de tentar novamente)
+- Tema claro/escuro com preferência salva no `localStorage`
+- Contador de resultados da busca
+- Avatar com iniciais do nome
+- Acessibilidade: navegação por teclado, foco gerenciado no modal, `aria-labels` e roles semânticos
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tecnologias
 
-## Expanding the ESLint configuration
+- **React 19** + **TypeScript**
+- **Vite**
+- **Tailwind CSS 4**
+- **Vitest** + **React Testing Library**
+- Fetch API (sem bibliotecas extras de requisição)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🚀 Como rodar
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+### Pré-requisitos
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+- Node.js 18+ (recomendado 20+)
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### Instalação
 
+```bash
+# Clone o repositório
+git clone https://github.com/MarcosVSantosF/API-JSON-Placeholder.git
+
+# Entre na pasta
+cd API-JSON-Placeholder
+
+# Instale as dependências
+npm install
+
+# Inicie o servidor de desenvolvimento
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+A aplicação estará disponível em `http://localhost:5173`.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Scripts disponíveis
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Comando | Descrição |
+| --- | --- |
+| `npm run dev` | Sobe o servidor de desenvolvimento |
+| `npm run build` | Gera o build de produção |
+| `npm run preview` | Visualiza o build de produção |
+| `npm run lint` | Executa o ESLint |
+| `npm test` | Roda os testes em modo watch |
+| `npm run test:run` | Roda os testes uma vez e encerra |
 
+## 📁 Estrutura do projeto
+
+```text
+src/
+├── components/          # Componentes de UI
+│   ├── Avatar.tsx
+│   ├── ErrorMessage.tsx
+│   ├── Loading.tsx
+│   ├── ResultsCount.tsx
+│   ├── SearchInput.tsx
+│   ├── ThemeToggle.tsx
+│   ├── UserCard.tsx
+│   ├── UserList.tsx
+│   └── UserModal.tsx
+├── hooks/               # Hooks customizados
+│   ├── useDebounce.ts
+│   ├── useTheme.ts
+│   └── useUsers.ts
+├── types/               # Tipagens TypeScript
+│   └── user.ts
+├── utils/               # Funções utilitárias
+│   ├── getInitials.ts
+│   └── normalizeText.ts
+├── test/                # Setup dos testes
+│   └── setup.ts
+├── App.tsx
+├── App.test.tsx
+├── index.css
+└── main.tsx
 ```
+
+## 🧪 Testes
+
+Os testes cobrem:
+
+- Funções utilitárias (`normalizeText` e `getInitials`)
+- Fluxo principal da aplicação:
+  - Carregamento e listagem de usuários
+  - Tratamento de erro com retry
+  - Filtro por nome (com normalização)
+  - Mensagem quando não há resultados
+  - Abertura/fechamento do modal (incluindo tecla Esc e restauração de foco)
+
+Para executar:
+
+```bash
+npm run test:run
+```
+
+## 🎨 Tema escuro
+
+O tema inicia seguindo a preferência do sistema operacional.  
+O usuário pode alternar manualmente pelo botão sol/lua no topo da página.  
+A escolha é persistida no `localStorage`.
+
+## 📡 API
+
+Endpoint utilizado:
+
+```text
+GET https://jsonplaceholder.typicode.com/users
+```
+
+## 📝 Observações
+
+- O código está componentizado e tipado com TypeScript
+- A busca normaliza o texto (remove acentos e converte para minúsculas)
+- O modal gerencia foco, bloqueia o scroll da página e fecha com a tecla `Esc`
+- O e-mail no modal é um link `mailto:`
+
+## 👤 Autor
+
+**Marcos V. Santos**  
+[GitHub](https://github.com/MarcosVSantosF)
