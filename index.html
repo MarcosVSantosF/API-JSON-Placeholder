@@ -8,6 +8,20 @@
   </head>
   <body>
     <div id="root"></div>
+    <script>
+  // Roda antes de a página aparecer: aplica o tema escuro se a pessoa o escolheu
+  // (ou se o sistema está escuro e ela nunca escolheu). Sem isso, o app abriria
+  // claro por um instante e só depois escureceria.
+  (function () {
+    try {
+      var saved = localStorage.getItem('theme')
+      var systemDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      if (saved === 'dark' || (saved !== 'light' && systemDark)) {
+        document.documentElement.classList.add('dark')
+      }
+    } catch (e) {}
+  })()
+</script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>

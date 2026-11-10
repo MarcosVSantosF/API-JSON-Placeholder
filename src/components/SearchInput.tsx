@@ -7,7 +7,7 @@ interface SearchInputProps {
 // Campo de busca "controlado": quem guarda o texto é o componente pai (App)
 export default function SearchInput({ value, onChange }: SearchInputProps) {
   return (
-    <div className="mb-6">
+    <div className="mb-3">
       {/* sr-only: label invisível na tela, mas lida por leitores de tela */}
       <label htmlFor="search" className="sr-only">
         Buscar usuário por nome
@@ -19,7 +19,7 @@ export default function SearchInput({ value, onChange }: SearchInputProps) {
         // A cada letra digitada, enviamos o novo texto para o componente pai
         onChange={(event) => onChange(event.target.value)}
         placeholder="Buscar usuário por nome..."
-        className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2 shadow-sm placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
+                className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2 shadow-sm placeholder:text-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200 dark:border-slate-600 dark:bg-slate-800 dark:placeholder:text-slate-400 dark:focus:border-indigo-400 dark:focus:ring-indigo-500/30"
       />
     </div>
   )

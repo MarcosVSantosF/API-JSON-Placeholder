@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import type { User } from '../types/user'
-
 
 // Endereço da API pública que devolve a lista de usuários
 const API_URL = 'https://jsonplaceholder.typicode.com/users'
 
-// Define o formato do que o hook devolve para quem o usa
+// Formato do que o hook devolve (agora inclui a função refetch)
 interface UseUsersResult {
   users: User[]
   loading: boolean
   error: string | null
+  refetch: () => void // busca os usuários de novo
 }
 
 export function useUsers(): UseUsersResult {
@@ -17,24 +17,24 @@ export function useUsers(): UseUsersResult {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  // Contador que, ao mudar, faz o useEffect rodar de novo (nova requisição)
+  const [reloadKey, setReloadKey] = useState(0)
+
   useEffect(() => {
     const controller = new AbortController()
 
     async function loadUsers() {
       try {
-        // Faz a requisição, ligando-a ao controller para poder cancelar
         const response = await fetch(API_URL, { signal: controller.signal })
 
-        // O fetch não lança erro em 404/500, então checamos manualmente
         if (!response.ok) {
           throw new Error(`Erro HTTP ${response.status}`)
         }
-        
-        // Converte o corpo da resposta (JSON) para a lista tipada
+
         const data: User[] = await response.json()
         setUsers(data)
         setLoading(false)
-     } catch (err) {
+      } catch (err) {
         if (err instanceof DOMException && err.name === 'AbortError') return
 
         console.error('Falha ao buscar usuários:', err)
@@ -45,9 +45,17 @@ export function useUsers(): UseUsersResult {
 
     loadUsers()
 
-    // Função de limpeza: roda quando o componente é desmontado
     return () => controller.abort()
+    // reloadKey na lista de dependências: cada vez que ele muda, o efeito roda de novo
+  }, [reloadKey])
+
+  // Função chamada pelo botão "Tentar novamente"
+  // useCallback mantém a mesma função entre renderizações (identidade estável)
+  const refetch = useCallback(() => {
+    setError(null) // limpa o erro anterior
+    setLoading(true) // volta a mostrar o "carregando"
+    setReloadKey((key) => key + 1) // dispara o useEffect de novo
   }, [])
 
-  return { users, loading, error }
+  return { users, loading, error, refetch }
 }

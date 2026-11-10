@@ -1,22 +1,30 @@
 import type { User } from '../types/user'
+import Avatar from './Avatar'
 
-// Propriedades: o usuário a exibir e a função chamada ao clicar no card
 interface UserCardProps {
   user: User
   onSelect: (user: User) => void
 }
 
-// Card de um usuário: mostra nome e email
 export default function UserCard({ user, onSelect }: UserCardProps) {
   return (
-    // Usamos <button> (e não <div>) para o card ser clicável também pelo teclado
-    <button
+        <button
       type="button"
-      onClick={() => onSelect(user)} // avisa o componente pai qual usuário foi clicado
-      className="w-full rounded-lg border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-indigo-400 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+      onClick={() => onSelect(user)}
+      className="flex w-full items-center gap-4 rounded-lg border border-slate-200 bg-white p-4 text-left shadow-sm transition hover:border-indigo-400 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:border-slate-700 dark:bg-slate-800 dark:hover:border-indigo-400"
     >
-      <p className="font-semibold text-slate-800">{user.name}</p>
-      <p className="text-sm text-slate-500">{user.email}</p>
+      <Avatar name={user.name} />
+
+      <div className="min-w-0">
+        <p className="truncate font-semibold text-slate-800 dark:text-slate-100">{user.name}</p>
+        <p className="truncate text-sm text-slate-600 dark:text-slate-300">{user.email}</p>
+        <p className="mt-1 truncate text-xs text-slate-500 dark:text-slate-400">
+          {user.company.name} · {user.address.city}
+        </p>
+      </div>
     </button>
+    
+    
+    
   )
 }

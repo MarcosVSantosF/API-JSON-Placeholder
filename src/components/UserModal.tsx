@@ -8,13 +8,14 @@ interface UserModalProps {
   onClose: () => void
 }
 
-// Linha "rótulo + conteúdo". Agora o conteúdo pode ser um texto OU um elemento
-// (como o link de email), por isso usamos "children" em vez de "value"
+// Linha "rótulo + conteúdo". O conteúdo pode ser um texto OU um elemento (como o link de email)
 function DetailItem({ label, children }: { label: string; children: ReactNode }) {
   return (
     <div>
-      <dt className="text-xs font-medium uppercase tracking-wide text-slate-500">{label}</dt>
-      <dd className="text-slate-800">{children}</dd>
+      <dt className="text-xs font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+        {label}
+      </dt>
+      <dd className="text-slate-800 dark:text-slate-100">{children}</dd>
     </div>
   )
 }
@@ -23,25 +24,19 @@ export default function UserModal({ user, onClose }: UserModalProps) {
   // Referência à caixa do modal, para controlarmos o foco do teclado
   const dialogRef = useRef<HTMLDivElement>(null)
 
-  // MELHORIA 1 — FOCO: ao abrir, o foco vai para dentro do modal;
+  // FOCO: ao abrir, o foco vai para dentro do modal;
   // ao fechar, volta para o elemento que estava focado (o card clicado)
   useEffect(() => {
-    // Guarda quem tinha o foco antes de o modal abrir (o card)
     const previouslyFocused = document.activeElement as HTMLElement | null
-
-    // Move o foco para a caixa do modal (leitores de tela passam a ler o título)
     dialogRef.current?.focus()
-
-    // Função de limpeza: roda quando o modal fecha e devolve o foco ao card
     return () => previouslyFocused?.focus()
   }, [])
 
-  // MELHORIA 2 — ROLAGEM: impede a página de trás de rolar enquanto o modal está aberto
+  // ROLAGEM: impede a página de trás de rolar enquanto o modal está aberto
   useEffect(() => {
     const originalOverflow = document.body.style.overflow
     document.body.style.overflow = 'hidden'
 
-    // Ao fechar, restaura o valor que existia antes
     return () => {
       document.body.style.overflow = originalOverflow
     }
@@ -55,10 +50,9 @@ export default function UserModal({ user, onClose }: UserModalProps) {
         return
       }
 
-      // Qualquer outra tecla que não seja Tab não nos interessa
       if (event.key !== 'Tab' || !dialogRef.current) return
 
-      // Lista os elementos que podem receber foco dentro do modal (link e botão)
+      // Elementos que podem receber foco dentro do modal (link e botão)
       const focusable = dialogRef.current.querySelectorAll<HTMLElement>(
         'a[href], button:not([disabled])',
       )
@@ -82,34 +76,34 @@ export default function UserModal({ user, onClose }: UserModalProps) {
   }, [onClose])
 
   return (
-    // Fundo escuro que cobre a tela toda; clicar nele fecha o modal.
-    // MELHORIA 3 — ANIMAÇÃO: motion-safe só anima para quem não desativou
-    // animações no sistema (respeita a preferência de acessibilidade)
+    // FUNDO ESCURO (overlay): cobre a tela toda e fecha o modal ao clicar.
+    // Repare: aqui NÃO existe bg-slate-800. O fundo é sempre preto semitransparente
+    // (um pouco mais forte no tema escuro, para destacar a caixa do modal)
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 motion-safe:animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 motion-safe:animate-fade-in dark:bg-black/60"
       onClick={onClose}
     >
-      {/* Caixa do modal.
-          tabIndex={-1}: permite receber foco por código (sem entrar na ordem do Tab) */}
+      {/* CAIXA DO MODAL: é aqui (e só aqui) que entra o dark:bg-slate-800.
+          O dark:ring-1 desenha uma borda fina no escuro, para a caixa não "sumir" no fundo */}
       <div
         ref={dialogRef}
         tabIndex={-1}
         role="dialog"
         aria-modal="true"
         aria-labelledby="modal-title"
-        className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl outline-none motion-safe:animate-scale-in"
+        className="w-full max-w-md rounded-xl bg-white p-6 shadow-xl outline-none motion-safe:animate-scale-in dark:bg-slate-800 dark:ring-1 dark:ring-slate-700"
         // Cliques DENTRO da caixa não chegam ao fundo, então não fecham o modal
         onClick={(event) => event.stopPropagation()}
       >
         <div className="mb-5 flex items-start justify-between gap-4">
-          <h2 id="modal-title" className="text-xl font-bold text-slate-800">
+          <h2 id="modal-title" className="text-xl font-bold text-slate-800 dark:text-slate-100">
             Detalhes do usuário
           </h2>
           <button
             type="button"
             onClick={onClose}
             aria-label="Fechar"
-            className="rounded-md p-1 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+            className="rounded-md p-1 text-slate-500 transition hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-slate-400 dark:hover:bg-slate-700 dark:hover:text-slate-100"
           >
             ✕
           </button>
@@ -118,11 +112,11 @@ export default function UserModal({ user, onClose }: UserModalProps) {
         <dl className="space-y-4">
           <DetailItem label="Nome completo">{user.name}</DetailItem>
 
-          {/* MELHORIA 4 — EMAIL CLICÁVEL: mailto: abre o programa de email do usuário */}
+          {/* Email clicável: mailto: abre o programa de email do usuário */}
           <DetailItem label="Email">
             <a
               href={`mailto:${user.email}`}
-              className="rounded text-indigo-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500"
+              className="rounded text-indigo-600 hover:underline focus:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500 dark:text-indigo-400"
             >
               {user.email}
             </a>

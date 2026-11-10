@@ -11,7 +11,9 @@ interface UserListProps {
 export default function UserList({ users, onSelect }: UserListProps) {
   // Se não houver nenhum usuário (ex.: busca sem resultado), mostra um aviso
   if (users.length === 0) {
-    return <p className="py-10 text-center text-slate-500">Nenhum usuário encontrado.</p>
+    return <p className="py-10 text-center text-slate-500" dark:text-slate-400>
+      Nenhum usuário encontrado.
+    </p>
   }
 
   return (
